@@ -7,7 +7,7 @@ from dingo.gw.gwutils import (
     get_window,
     get_window_factor,
 )
-
+from gwdatafind import find_urls
 
 def estimate_single_psd(
     time_start,
@@ -58,6 +58,10 @@ def estimate_single_psd(
         psd_strain = TimeSeries.fetch_open_data(
             det, time_start, time_end, sample_rate=f_s, cache=False
         )
+        # detector = det[0]
+        # path = detector + "1_LOSC_4_V1"
+        # get_url = find_urls(detector, path, time_start, time_end, host="https://datafind.gw-openscience.org")
+
     psd_strain = psd_strain.to_pycbc()
 
     # optionally generate window

@@ -1,0 +1,23 @@
+universe = vanilla
+executable = /home/qubit/Documents/Master's Thesis/Original Dingo/original-dingo-venv/bin/dingo_pipe_generation
+request_memory = 8.0GB
+request_disk = 5GB
+request_cpus = 1
+initialdir = /home/qubit/Documents/Master's Thesis/Original Dingo/dingo/examples/toy_npe_model
+notification = Never
+requirements = 
+should_transfer_files = YES
+transfer_input_files = outdir_GW150914/GW150914_config_complete.ini
+transfer_output_files = outdir_GW150914
+when_to_transfer_output = ON_EXIT_OR_EVICT
+preserve_relative_paths = True
+stream_error = True
+stream_output = True
+log = outdir_GW150914/log_data_generation/GW150914_data0_1126259462-4_generation.log
+output = outdir_GW150914/log_data_generation/GW150914_data0_1126259462-4_generation.out
+error = outdir_GW150914/log_data_generation/GW150914_data0_1126259462-4_generation.err
+accounting_group = dingo
+priority = 0
+environment = "HDF5_USE_FILE_LOCKING=FAlSE OMP_NUM_THREADS=1 OMP_PROC_BIND=false GWDATAFIND_SERVER=https://datafind.ligo.org"
+arguments = $(ARGS)
+queue

@@ -1,0 +1,35 @@
+domain:
+  type: FrequencyDomain
+  f_min: 20.0
+  f_max: 1024.0
+  delta_f: 0.25  # Expressions like 1.0/8.0 would require eval and are not supported
+
+waveform_generator:
+  approximant: IMRPhenomPv2
+  f_ref: 20.0
+  # f_start: 15.0  # Optional setting useful for EOB waveforms. Overrides f_min when generating waveforms.
+
+# Dataset only samples over intrinsic parameters. Extrinsic parameters are chosen at train time.
+intrinsic_prior:
+  mass_1: bilby.core.prior.Constraint(minimum=10.0, maximum=80.0)
+  mass_2: bilby.core.prior.Constraint(minimum=10.0, maximum=80.0)
+  mass_ratio: bilby.gw.prior.UniformInComponentsMassRatio(minimum=0.125, maximum=1.0)
+  chirp_mass: bilby.gw.prior.UniformInComponentsChirpMass(minimum=25.0, maximum=100.0)
+  luminosity_distance: 1000.0
+  theta_jn: bilby.core.prior.Sine(minimum=0.0, maximum=np.pi)
+  phase: bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")
+  a_1: bilby.core.prior.Uniform(minimum=0.0, maximum=0.99)
+  a_2: bilby.core.prior.Uniform(minimum=0.0, maximum=0.99)
+  tilt_1: bilby.core.prior.Sine(minimum=0.0, maximum=np.pi)
+  tilt_2: bilby.core.prior.Sine(minimum=0.0, maximum=np.pi)
+  phi_12: bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")
+  phi_jl: bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")
+  m_lens: default
+  y_lens: default
+  z_lens: 0.0
+  geocent_time: 0.0
+
+# Dataset size
+num_samples: 1000
+
+compression: None

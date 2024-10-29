@@ -20,8 +20,12 @@ import dingo.gw.waveform_generator.wfg_utils as wfg_utils
 import dingo.gw.waveform_generator.frame_utils as frame_utils
 from dingo.gw.domains import Domain, FrequencyDomain, TimeDomain
 
+from pycbc import types
+from dingo.gw.waveform_generator.point_lens import PointLens
+from dingo.gw.waveform_generator.gw_utils import GWUtils
+from dingo.gw.waveform_generator.general_utils import GeneralUtils
 
-class WaveformGenerator:
+class WaveformGenerator(PointLens, GWUtils, GeneralUtils):
     """Generate polarizations using LALSimulation routines in the specified domain for a
     single GW coalescence given a set of waveform parameters.
     """
@@ -172,6 +176,10 @@ class WaveformGenerator:
         parameters = parameters.copy()
         parameters["f_ref"] = self.f_ref
 
+        lens_parameters = {}
+        lens_parameters['m_lens'] = parameters.pop('m_lens')
+        lens_parameters['y_lens'] = parameters.pop('y_lens')
+
         parameters_generator = self._convert_parameters(parameters, self.lal_params)
 
         # Generate GW polarizations
@@ -183,7 +191,7 @@ class WaveformGenerator:
             raise ValueError(f"Unsupported domain type {type(self.domain)}.")
 
         try:
-            wf_dict = wf_generator(parameters_generator)
+            wf_dict = wf_generator(parameters_generator, lens_parameters)
         except Exception as e:
             if not catch_waveform_errors:
                 raise
@@ -438,8 +446,31 @@ class WaveformGenerator:
             # LS.SimInspiralModeArrayActivateMode(ma, ell, -m)
         LS.SimInspiralWaveformParamsInsertModeArray(lal_params, ma)
         return lal_params
+    
+    def _compute_Ff_for_point_mass_microlensing(
+        self, fd_hp, fd_hc, m_lens, y_lens, z_lens
+    ):
+        """
+        Compute the amplification factor array to be applied to
+        fd_hp and fd_hc using the point-mass model for microlensing.
+        """
+        if np.allclose(fd_hp.sample_frequencies, fd_hc.sample_frequencies):
+            fs = fd_hp.sample_frequencies
+            Ff = self.Ff_effective_map(fs=fs, ml=m_lens, y=y_lens, zl=z_lens)
+            return Ff, Ff
 
-    def generate_FD_waveform(self, parameters_lal: Tuple) -> Dict[str, np.ndarray]:
+        print(
+            "Warning: Different frequency arrays for hp and hc. Computing separately."
+        )
+        Ff_hp = self.Ff_effective_map(
+            fs=fd_hp.sample_frequencies, ml=m_lens, y=y_lens, zl=z_lens
+        )
+        Ff_hc = self.Ff_effective_map(
+            fs=fd_hc.sample_frequencies, ml=m_lens, y=y_lens, zl=z_lens
+        )
+        return Ff_hp, Ff_hc
+
+    def generate_FD_waveform(self, parameters_lal: Tuple, lens_parameter: Dict) -> Dict[str, np.ndarray]:
         """
         Generate Fourier domain GW polarizations (h_plus, h_cross).
 
@@ -538,6 +569,30 @@ class WaveformGenerator:
         time_shift = np.exp(-1j * 2 * np.pi * dt * frequency_array)
         h_plus *= time_shift
         h_cross *= time_shift
+
+        if lens_parameter['m_lens'] != 0:
+            h_plus = types.FrequencySeries(h_plus, delta_f=self.domain.delta_f)                # TODO: Automate delta_f
+            h_cross = types.FrequencySeries(h_cross, delta_f=self.domain.delta_f)
+
+            Ff_hp, Ff_hc = self._compute_Ff_for_point_mass_microlensing(
+                    h_plus, h_cross, m_lens = lens_parameter['m_lens'], y_lens = lens_parameter['y_lens'], z_lens = 0
+                )
+
+            # Apply lensing to the waveforms
+            lensed_fd_hp_array = Ff_hp * np.asarray(h_plus)
+            lensed_fd_hc_array = Ff_hc * np.asarray(h_cross)
+
+            # Convert to PyCBC FrequencySeries object
+            lensed_fd_hp = types.FrequencySeries(
+                lensed_fd_hp_array, delta_f=h_plus.delta_f, epoch=h_plus.start_time
+            )
+            lensed_fd_hc = types.FrequencySeries(
+                lensed_fd_hc_array, delta_f=h_cross.delta_f, epoch=h_plus.start_time
+            )
+
+            h_plus = np.asarray(lensed_fd_hp)
+            h_cross = np.asarray(lensed_fd_hc)
+
         pol_dict = {"h_plus": h_plus, "h_cross": h_cross}
         return pol_dict
 
@@ -1371,6 +1426,7 @@ def sum_contributions_m(x_m, phase_shift=0.0):
 if __name__ == "__main__":
     import pandas as pd
     import numpy as np
+    import random
     from dingo.gw.domains import build_domain
     from dingo.gw.prior import build_prior_with_defaults
 
@@ -1395,24 +1451,27 @@ if __name__ == "__main__":
         "tilt_2": "bilby.core.prior.Sine(minimum=0.0, maximum=np.pi)",
         "phi_12": 'bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")',
         "phi_jl": 'bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")',
+        "m_lens": 'bilby.core.prior.Uniform(minimum=0.0, maximum=50.0)',
+        "y_lens": 'bilby.core.prior.Uniform(minimum=0.0, maximum=5.0)',
         "geocent_time": 0.0,
     }
     prior = build_prior_with_defaults(intrinsic_dict)
     p = prior.sample()
-    p = {
-        "mass_ratio": 0.3501852584069329,
-        "chirp_mass": 31.709276525188667,
-        "luminosity_distance": 1000.0,
-        "theta_jn": 1.3663250108421872,
-        "phase": 2.3133395191342094,
-        "a_1": 0.9082488389607664,
-        "a_2": 0.23195443013657285,
-        "tilt_1": 2.2991912365076708,
-        "tilt_2": 2.2878677821511086,
-        "phi_12": 2.3726027637572384,
-        "phi_jl": 1.5356479043406908,
-        "geocent_time": 0.0,
-    }
+
+    # p = {
+    #     "mass_ratio": 0.3501852584069329,
+    #     "chirp_mass": 31.709276525188667,
+    #     "luminosity_distance": 1000.0,
+    #     "theta_jn": 1.3663250108421872,
+    #     "phase": 2.3133395191342094,
+    #     "a_1": 0.9082488389607664,
+    #     "a_2": 0.23195443013657285,
+    #     "tilt_1": 2.2991912365076708,
+    #     "tilt_2": 2.2878677821511086,
+    #     "phi_12": 2.3726027637572384,
+    #     "phi_jl": 1.5356479043406908,
+    #     "geocent_time": 0.0,
+    # }
 
     wfg = WaveformGenerator(
         # "SEOBNRv4PHM",
@@ -1423,11 +1482,11 @@ if __name__ == "__main__":
         spin_conversion_phase=0.0,
     )
 
-    pol_m = wfg.generate_hplus_hcross_m(p)
+    # pol_m = wfg.generate_hplus_hcross_m(p)
 
     phase_shift = np.random.uniform(high=2 * np.pi)
     print(f"{phase_shift:.2f}")
-    pol = sum_contributions_m(pol_m, phase_shift=phase_shift)
+    # pol = sum_contributions_m(pol_m, phase_shift=phase_shift)
 
     pol_ref = wfg.generate_hplus_hcross({**p, "phase": p["phase"] + phase_shift})
     # m = mismatch(
@@ -1440,7 +1499,11 @@ if __name__ == "__main__":
     x = wfg.domain()
     plt.xlim((10, 512))
     plt.xscale("log")
-    plt.plot(x, pol_ref["h_plus"].real)
-    plt.plot(x, pol["h_plus"].real)
-    plt.plot(x, (pol_ref["h_plus"] - pol["h_plus"]).real)
+    plt.plot(x, np.asarray(pol_ref["h_plus"]).real, label = 'hp')
+    plt.plot(x, np.asarray(pol_ref["h_cross"]).real, label = 'hc')
+    # # # plt.plot(x, np.asanyarray(pol_ref["h_plus"]).real, label = 'Unlensed')
+    # # # plt.plot(x, pol["h_plus"].real)
+    # # # plt.plot(x, (pol_ref["h_plus"] - pol["h_plus"]).real)
+    plt.legend()
     plt.show()
+    print(p)

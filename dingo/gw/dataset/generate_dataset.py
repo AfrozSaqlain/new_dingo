@@ -45,7 +45,11 @@ def generate_parameters_and_polarizations(
     dictionary of numpy arrays corresponding to waveform polarizations
     """
     print("Generating dataset of size " + str(num_samples))
-    parameters = pd.DataFrame(prior.sample(num_samples))
+    p = prior.sample(num_samples)
+    indices = np.random.choice(p['m_lens'].size, size=p['m_lens'].size // 2, replace=False)
+    p['m_lens'][indices] = 0
+    p['y_lens'][indices] = 0
+    parameters = pd.DataFrame(p)
 
     if num_processes > 1:
         with threadpool_limits(limits=1, user_api="blas"):

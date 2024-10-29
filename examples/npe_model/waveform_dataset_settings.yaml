@@ -5,7 +5,7 @@ domain:
   delta_f: 0.125  # Expressions like 1.0/8.0 would require eval and are not supported
 
 waveform_generator:
-  approximant: IMRPhenomXPHM  # SEOBNRv4PHM
+  approximant: IMRPhenomXPv2  # SEOBNRv4PHM
   f_ref: 20.0
   # f_start: 15.0  # Optional setting useful for EOB waveforms. Overrides f_min when generating waveforms.
   spin_conversion_phase: 0.0
@@ -19,6 +19,8 @@ intrinsic_prior:
   phase: default
   chi_1: bilby.gw.prior.AlignedSpin(name='chi_1', a_prior=Uniform(minimum=0, maximum=0.9))
   chi_2: bilby.gw.prior.AlignedSpin(name='chi_2', a_prior=Uniform(minimum=0, maximum=0.9))
+  m_lens: default
+  y_lens: default
   theta_jn: default
   # Reference values for fixed (extrinsic) parameters. These are needed to generate a waveform.
   luminosity_distance: 100.0  # Mpc

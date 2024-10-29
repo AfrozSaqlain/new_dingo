@@ -1,0 +1,48 @@
+Results from file no. 1 (where m_lens: 99.91545024524629 and y_lens: 3.1654022607479684):
+(np.float64(0.9999999999973739), np.int64(0))
+Results from file no. 2 (where m_lens: 76.94046343927509 and y_lens: 3.1357503684591364):
+(np.float64(0.9999999999989581), np.int64(0))
+Results from file no. 6 (where m_lens: 7.251892011082783 and y_lens: 1.668060751772102):
+(np.float64(0.9999999999986859), np.int64(0))
+Results from file no. 7 (where m_lens: 16.54876484835156 and y_lens: 3.61639088875596):
+(np.float64(0.9999999999995269), np.int64(0))
+Results from file no. 8 (where m_lens: 7.674441192035497 and y_lens: 1.9926696988540626):
+(np.float64(0.9999999999978992), np.int64(0))
+Results from file no. 9 (where m_lens: 12.640268376935182 and y_lens: 3.1200501218711825):
+(np.float64(0.9999999999987192), np.int64(0))
+Results from file no. 11 (where m_lens: 0.08502444218692062 and y_lens: 2.7001653455223935):
+(np.float64(0.9999999999988826), np.int64(0))
+Results from file no. 14 (where m_lens: 64.06004341635581 and y_lens: 2.783742068726593):
+(np.float64(0.9999999999979113), np.int64(0))
+Results from file no. 16 (where m_lens: 80.07080807168282 and y_lens: 4.835911371616185):
+(np.float64(0.999999999998742), np.int64(0))
+Results from file no. 17 (where m_lens: 39.461915387789595 and y_lens: 0.43313138168553866):
+(np.float64(0.9999999999982561), np.int64(0))
+Results from file no. 20 (where m_lens: 34.126528180935836 and y_lens: 0.2917162947059859):
+(np.float64(0.9999999999985388), np.int64(0))
+Results from file no. 21 (where m_lens: 91.70238361726358 and y_lens: 1.0465990827083789):
+(np.float64(0.9999999999986167), np.int64(0))
+Results from file no. 23 (where m_lens: 75.20214590619491 and y_lens: 2.888207205590549):
+(np.float64(0.9999999999988859), np.int64(0))
+Results from file no. 26 (where m_lens: 18.128531329076335 and y_lens: 0.8131226366528405):
+(np.float64(0.9999999999993425), np.int64(0))
+Results from file no. 29 (where m_lens: 40.31136675197735 and y_lens: 0.9856244166078071):
+(np.float64(0.9999999999984543), np.int64(0))
+Results from file no. 32 (where m_lens: 18.927288623981966 and y_lens: 0.260937850966646):
+(np.float64(0.9999999999967578), np.int64(0))
+Results from file no. 34 (where m_lens: 98.39351036809944 and y_lens: 0.4427533841096287):
+(np.float64(0.9999999999971487), np.int64(0))
+Results from file no. 36 (where m_lens: 35.19151461797399 and y_lens: 3.5246062750715987):
+(np.float64(0.9999999999992043), np.int64(0))
+Results from file no. 42 (where m_lens: 3.603324652751627 and y_lens: 1.3754357818652707):
+(np.float64(0.9999999999983192), np.int64(0))
+Results from file no. 43 (where m_lens: 8.400133713007563 and y_lens: 0.4791781643238785):
+(np.float64(0.9999999999972), np.int64(0))
+Results from file no. 45 (where m_lens: 48.09990719384363 and y_lens: 2.238094981735215):
+(np.float64(0.99999999999862), np.int64(0))
+Results from file no. 46 (where m_lens: 13.669930650218 and y_lens: 3.6747950145875423):
+(np.float64(0.9999999999991234), np.int64(0))
+Results from file no. 47 (where m_lens: 20.09106113488749 and y_lens: 1.8692353951518141):
+(np.float64(0.9999999999980616), np.int64(0))
+Results from file no. 49 (where m_lens: 36.699615124592334 and y_lens: 2.7900812416788616):
+(np.float64(0.9999999999985401), np.int64(0))

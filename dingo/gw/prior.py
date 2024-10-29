@@ -123,6 +123,8 @@ default_intrinsic_dict = {
     "tilt_1": "bilby.core.prior.Sine(minimum=0.0, maximum=np.pi)",
     "tilt_2": "bilby.core.prior.Sine(minimum=0.0, maximum=np.pi)",
     "phi_12": 'bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")',
+    "m_lens": 'bilby.core.prior.Uniform(minimum=0.0, maximum=100.0)',
+    "y_lens": 'bilby.core.prior.Uniform(minimum=0.0, maximum=5.0)',
     "phi_jl": 'bilby.core.prior.Uniform(minimum=0.0, maximum=2*np.pi, boundary="periodic")',
     "geocent_time": 0.0,
 }
@@ -140,6 +142,8 @@ default_inference_parameters = [
     "theta_jn",
     "luminosity_distance",
     "geocent_time",
+    "m_lens",
+    "y_lens",
     "ra",
     "dec",
     "psi",
